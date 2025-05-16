@@ -6,6 +6,83 @@
     <title>Тест: Інформаційна картина світу</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .option-btn {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+        
+        .option-btn.correct {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        .option-btn.incorrect {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        
+        .option-btn.selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            transition: width 0.5s ease;
+        }
+        
+        .result-icon {
+            font-size: 5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .feedback-animation {
+            animation: fadeInOut 1.5s ease;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f59e0b;
+            border-radius: 50%;
+            animation: confetti-fall 3s ease-in-out infinite;
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
+        }
+    </style>
 </head>
 <body class="font-montserrat bg-gradient-to-br from-blue-500 to-blue-800 min-h-screen flex items-center justify-center p-4">
     <div class="max-w-2xl w-full">
@@ -91,84 +168,6 @@
             </button>
         </div>
     </div>
-
-    <style>
-        .quiz-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-        
-        .option-btn {
-            transition: all 0.3s ease;
-            border: 2px solid #e5e7eb;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .option-btn:hover {
-            border-color: #3b82f6;
-            transform: translateY(-2px);
-        }
-        
-        .option-btn.correct {
-            background-color: #10b981;
-            color: white;
-            border-color: #10b981;
-        }
-        
-        .option-btn.incorrect {
-            background-color: #ef4444;
-            color: white;
-            border-color: #ef4444;
-        }
-        
-        .option-btn.selected {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-        }
-        
-        .progress-bar {
-            height: 8px;
-            transition: width 0.5s ease;
-        }
-        
-        .result-icon {
-            font-size: 5rem;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        .feedback-animation {
-            animation: fadeInOut 1.5s ease;
-        }
-        
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(-20px); }
-            20% { opacity: 1; transform: translateY(0); }
-            80% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
-        }
-        
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #f59e0b;
-            border-radius: 50%;
-            animation: confetti-fall 3s ease-in-out infinite;
-        }
-        
-        @keyframes confetti-fall {
-            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
-        }
-    </style>
 
     <script>
         // Quiz data
@@ -462,7 +461,6 @@
             });
             
             if (isCorrect) {
-                score++;
                 showFeedback('Правильно! 👍', 'success');
             } else {
                 showFeedback('Неправильно. Правильна відповідь виділена зеленим.', 'error');
@@ -481,6 +479,14 @@
         }
 
         function calculateResults() {
+            // Reset score and recalculate all answers
+            score = 0;
+            quizData.forEach((question, index) => {
+                if (userAnswers[index] === question.correctAnswer) {
+                    score++;
+                }
+            });
+
             const percentage = (score / quizData.length) * 100;
             scoreText.textContent = `Ваш результат: ${score} з ${quizData.length} (${percentage.toFixed(0)}%)`;
             scoreBar.style.width = `${percentage}%`;
